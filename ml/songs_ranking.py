@@ -1,6 +1,8 @@
 import librosa
 import numpy as np
 from scipy.spatial.distance import cosine
+import os
+import dotenv
 
 import warnings
 
@@ -15,8 +17,9 @@ def calculate_mfcc(file_path, n_mfcc=13):
     :param n_mfcc: Number of MFCC features to extract
     :return: Mean MFCC vector
     """
+    dotenv.load_dotenv()
     try:
-        y, sr = librosa.load(file_path)
+        y, sr = librosa.load(os.environ["CATALOGUE"] + file_path)
     except:
         return np.ones((n_mfcc,), dtype=float)
     mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)

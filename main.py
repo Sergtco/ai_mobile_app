@@ -1,7 +1,7 @@
 import json
 from re import error
 from flask import Flask, Response, request
-from songs_ranking import calculate_mfcc, rank_tracks_cosine
+from ml.songs_ranking import calculate_mfcc, rank_tracks_cosine
 from threading import Lock
 import sqlite3
 
@@ -46,16 +46,16 @@ def radio():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     """
-    Gets json with {"target_id": int}
+    Gets json with {"id": int}
     """
     json_data = request.get_json()
-    if not validate(json_data, ["target_id"]):
+    if not validate(json_data, ["id"]):
         return Response(status=400)
     target_query = "SELECT features FROM song_features WHERE song_id=?"
-    res = cursor.execute(target_query, (json_data["target_id"],))
+    res = cursor.execute(target_query, (json_data["id"],))
     target_features = json.loads(res.fetchone()[0])
     other_query = "select song_id, features from song_features where song_id != ?"
-    res = cursor.execute(other_query, (json_data["target_id"],))
+    res = cursor.execute(other_query, (json_data["id"],))
     other_features = {}
     row = res.fetchone()
     while row != None:
