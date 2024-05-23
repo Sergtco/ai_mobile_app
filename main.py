@@ -1,6 +1,6 @@
 import json
 from re import error
-from flask import Flask, Response, request
+from flask import Flask, Response, request, jsonify
 from ml.songs_ranking import calculate_mfcc, rank_tracks_cosine
 from threading import Lock
 import sqlite3
@@ -66,7 +66,7 @@ def radio():
     conn.close()
     mutex.release()
     ranks = rank_tracks_cosine(target_features, other_features)
-    return ranks
+    return jsonify({"ranks": ranks})
 
 
 def init_db():
